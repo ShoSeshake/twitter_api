@@ -1,0 +1,34 @@
+
+<a href="/tops/refresh">リフレッシュ</a>
+<div style="display:flex;">
+  <div style="width: 50%;">
+  <% @tweets.each do |t| %>
+    <div style="margin-top: 1rem;">
+    <div>
+    <%=t.tweet_id %>
+    </div>
+    <div>
+    <%=simple_format(t.tweet_text) %>
+    </div>
+    <div>
+    いいね数
+    <%=t.likes.length %>
+    </div>
+    </div>
+  <%end%>
+  </div>
+  <div style="width: 50%;">
+  <% @users.each do |u| %>
+    <div>
+    <div>
+    <%=link_to"https://twitter.com/#{u.username}", target:"_blank" do %>
+      <%=u.name %>
+    <%end%>
+    <%="(#{u.likes.length})"%>
+    </div>
+    <div>
+    </div>
+    </div>
+  <%end%>
+  </div>
+</div>
