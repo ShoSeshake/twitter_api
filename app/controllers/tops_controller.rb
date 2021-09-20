@@ -4,8 +4,8 @@ class TopsController < ApplicationController
   require 'uri'
 
   def index
-    @tweets = Tweet.includes(:likes).order(id:'asc')
-    @users = User.includes(:likes).sort {|a,b| b.likes.size <=> a.likes.size}
+    # @tweets = Tweet.includes(:likes).order(id:'asc')
+    # @users = User.includes(:likes).sort {|a,b| b.likes.size <=> a.likes.size}
   end
 
   def refresh

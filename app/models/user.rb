@@ -1,5 +1,11 @@
 class User < ApplicationRecord
-  belongs_to :auth, optional: true
-  has_many :likes
-  has_many :tweets, through: :likes
+  # Include default devise modules.
+  devise :database_authenticatable, :registerable, :omniauthable,
+          :recoverable, :rememberable, :trackable, :validatable,
+          :confirmable
+  include DeviseTokenAuth::Concerns::User
+  devise :omniauthable, omniauth_providers: %i[twitter]
+
+
+  has_one :twitter_account
 end

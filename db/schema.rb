@@ -12,7 +12,35 @@
 
 ActiveRecord::Schema.define(version: 2021_09_12_223602) do
 
-  create_table "auths", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "likes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.bigint "twitter_account_id", null: false
+    t.bigint "tweet_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["tweet_id"], name: "index_likes_on_tweet_id"
+    t.index ["twitter_account_id"], name: "index_likes_on_twitter_account_id"
+  end
+
+  create_table "tweets", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "tweet_id", null: false
+    t.text "tweet_text", null: false
+    t.bigint "twitter_account_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["twitter_account_id"], name: "index_tweets_on_twitter_account_id"
+  end
+
+  create_table "twitter_accounts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "twitter_user_id", null: false
+    t.string "twitter_username", null: false
+    t.string "twitter_name", null: false
+    t.bigint "user_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_twitter_accounts_on_user_id"
+  end
+
+  create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "provider", default: "email", null: false
     t.string "uid", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -33,42 +61,14 @@ ActiveRecord::Schema.define(version: 2021_09_12_223602) do
     t.text "tokens"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["confirmation_token"], name: "index_auths_on_confirmation_token", unique: true
-    t.index ["email"], name: "index_auths_on_email", unique: true
-    t.index ["reset_password_token"], name: "index_auths_on_reset_password_token", unique: true
-    t.index ["uid", "provider"], name: "index_auths_on_uid_and_provider", unique: true
-  end
-
-  create_table "likes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "tweet_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["tweet_id"], name: "index_likes_on_tweet_id"
-    t.index ["user_id"], name: "index_likes_on_user_id"
-  end
-
-  create_table "tweets", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.string "tweet_id", null: false
-    t.text "tweet_text", null: false
-    t.bigint "user_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["user_id"], name: "index_tweets_on_user_id"
-  end
-
-  create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.string "twitter_user_id", null: false
-    t.string "twitter_username", null: false
-    t.string "twitter_name", null: false
-    t.bigint "user_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["user_id"], name: "index_users_on_user_id"
+    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
   add_foreign_key "likes", "tweets"
-  add_foreign_key "likes", "users"
-  add_foreign_key "tweets", "users"
-  add_foreign_key "users", "users"
+  add_foreign_key "likes", "twitter_accounts"
+  add_foreign_key "tweets", "twitter_accounts"
+  add_foreign_key "twitter_accounts", "users"
 end

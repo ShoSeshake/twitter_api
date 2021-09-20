@@ -47,3 +47,6 @@ gem 'pry-rails'
 gem 'devise'
 gem 'rack-cors'
 gem 'devise_token_auth'
+
+gem 'omniauth'
+gem 'omniauth-twitter'

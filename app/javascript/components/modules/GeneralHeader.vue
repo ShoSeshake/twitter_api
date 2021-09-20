@@ -5,6 +5,7 @@
 
     <v-spacer></v-spacer>
     <template>
+      <a href="/omniauth/twitter">Twitter</a>
     <router-link to="/">
       <v-btn icon>
         <v-icon>mdi-account-group</v-icon>

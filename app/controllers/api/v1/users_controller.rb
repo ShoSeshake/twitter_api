@@ -8,8 +8,9 @@ class Api::V1::UsersController < ApiController
 
   def index
     # @tweets = Tweet.includes(:likes).order(id:'asc')
-    @users = User.includes(:likes).sort {|a,b| b.likes.size <=> a.likes.size}
-    render json: @users.to_json(include: [:likes])
+    # @users = TweetAccount.includes(:likes).sort {|a,b| b.likes.size <=> a.likes.size}
+    @users = nil
+    render json: @users.to_json
   end
 
   def show

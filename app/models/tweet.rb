@@ -1,4 +1,4 @@
 class Tweet < ApplicationRecord
+  belongs_to :twitter_account
   has_many :likes
-  has_many :users, through: :likes
 end
