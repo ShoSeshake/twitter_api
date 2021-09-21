@@ -16,6 +16,14 @@ class Api::V1::UsersController < ApiController
   def show
   end
 
+  def set_id
+    if user_signed_in?
+      render json: current_user.to_json
+    else
+      render json: nil
+    end
+  end
+
   def refresh
     tweets = []
     all_tweets = Tweet.all.includes(:likes)

@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
+import auth from "./modules/auth";
 
 // import axios from "../axios-auth";
 // import router from "../router";
@@ -9,13 +10,16 @@ import axios from "axios";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state:{
-    tweets:[],
-    users:[],
+  modules: {
+    auth,
+  },
+  state: {
+    tweets: [],
+    users: [],
     loading: false,
   },
   getters: {
-    loading:(state) => state.loading,
+    loading: (state) => state.loading,
     tweets: (state) => state.tweets,
     users: (state) => state.users,
   },
@@ -26,16 +30,17 @@ export default new Vuex.Store({
     setUsers(state, users) {
       state.users = users;
     },
-    setAjaxLoader(state, loading_status){
+    setAjaxLoader(state, loading_status) {
       state.loading = loading_status;
-    }
+    },
   },
   actions: {
     getUsers() {
-      return  axios.get("/api/v1/users")
+      return axios.get("/api/v1/users");
     },
     getTweets() {
-      return  axios.get("/api/v1/tweets")
+      return axios.get("/api/v1/tweets");
     },
   },
+
 });

@@ -1,12 +1,8 @@
 class ApplicationController < ActionController::Base
   # include DeviseTokenAuth::Concerns::SetUserByToken
-  protect_from_forgery
-  before_action :skip_session
+  # protect_from_forgery
 
   protected
-  def skip_session
-    request.session_options[:skip] = true
-  end
 
   def get_response(path, query_params=nil)
     uri = URI.parse("https://api.twitter.com#{path}")
@@ -19,5 +15,9 @@ class ApplicationController < ActionController::Base
 
     response = http.request(req)
     json_data =  JSON.parse response.body
+  end
+
+  def after_sign_in_path_for(resource)
+    "/oauth"
   end
 end

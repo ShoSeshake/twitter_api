@@ -47,6 +47,7 @@ export default {
   padding: 32px 8px 0;
   max-width: 600px;
   margin: 0 auto;
+  min-height: 90vh;
 }
 table,tbody,thead{
   display: block;

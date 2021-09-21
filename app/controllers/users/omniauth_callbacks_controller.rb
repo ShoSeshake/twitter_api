@@ -39,8 +39,11 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     user = User.create(
       provider: provider,
       uid: auth.uid,
-      password: Devise.friendly_token(20),
-      password_confirmation: Devise.friendly_token(20),
+      password: "12345678",
+      password_confirmation: "12345678",
+      email: "#{auth.uid}@dummy.com",
+      access_token: auth.credentials.token,
+      secret_token: auth.credentials.secret,
     )
     twitter_account = TwitterAccount.find_by(twitter_user_id: user.uid)
     if twitter_account.present?
@@ -56,11 +59,6 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     sign_in_and_redirect user, event: :authentication
   end
 
-
-  def get_id(name)
-    response = get_response("/2/users/by/username/#{name}")
-    return response['data']['id']
-  end
 
   def after_omniauth_failure_path_for(scope)
     root_path

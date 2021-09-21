@@ -1,11 +1,11 @@
 <template>
-  <v-app-bar dense color="blue accent-2" dark>
+  <v-app-bar dense color="blue accent-2" dark app>
 
     <v-toolbar-title>Twitter Magagement</v-toolbar-title>
 
     <v-spacer></v-spacer>
     <template>
-      <a href="/omniauth/twitter">Twitter</a>
+      
     <router-link to="/">
       <v-btn icon>
         <v-icon>mdi-account-group</v-icon>
