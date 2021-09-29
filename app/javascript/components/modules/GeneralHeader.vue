@@ -1,11 +1,16 @@
 <template>
-  <v-app-bar dense color="blue accent-2" dark app>
+  <v-app-bar dense color="blue accent-2" dark>
 
     <v-toolbar-title>Twitter Magagement</v-toolbar-title>
 
     <v-spacer></v-spacer>
     <template>
-      
+    <!-- <template v-if="this.$store.id != null"> -->
+    <router-link to="/likes">
+      <v-btn icon>
+        <v-icon>mdi-heart-outline</v-icon>
+      </v-btn>
+    </router-link>
     <router-link to="/">
       <v-btn icon>
         <v-icon>mdi-account-group</v-icon>

@@ -8,8 +8,13 @@ class Api::V1::UsersController < ApiController
 
   def index
     # @tweets = Tweet.includes(:likes).order(id:'asc')
-    # @users = TweetAccount.includes(:likes).sort {|a,b| b.likes.size <=> a.likes.size}
-    @users = nil
+    tweets = current_user.twitter_account.tweets
+    @users = []
+    users = Like.includes(:twitter_account).where(tweet:tweets).group_by(&:twitter_account)
+    users.each do |user, likes|
+      @users << {id:user.twitter_user_id, name:user.twitter_name, username:user.twitter_username, likes_count:likes.length}
+    end
+    @users = @users.sort{|a,b|b[:likes_count ] <=>  a[:likes_count]}
     render json: @users.to_json
   end
 
@@ -26,38 +31,39 @@ class Api::V1::UsersController < ApiController
 
   def refresh
     tweets = []
+    users = TwitterAccount.all.to_a
     all_tweets = Tweet.all.includes(:likes)
-    @client.user_timeline("littlecheetah5", {count:100}).each do |t|
-      if t.attrs[:entities][:user_mentions].length == 0
-        tweet = all_tweets.find{|tw|tw.tweet_id == t.attrs[:id].to_s}
-        tweet = Tweet.create(tweet_id:t.attrs[:id], tweet_text:t.attrs[:text]) unless tweet.present?
+    @client.user_timeline(current_user.twitter_account.twitter_username, {count:100}).each do |t|
+      tweet_data = t.attrs
+      if tweet_data[:entities][:user_mentions].length == 0
+        tweet = all_tweets.find{|tw|tw.tweet_id == tweet_data[:id].to_s}
+        c = tweet_data[:created_at].split(' ')
+        create_at = Time.new(c[5], c[1], c[2], c[3].split(':')[0], c[3].split(':')[1], c[3].split(':')[2])
+        tweet = Tweet.create(tweet_id:tweet_data[:id], tweet_text:tweet_data[:text], tweet_created_at: create_at, twitter_account:current_user.twitter_account) unless tweet.present?
         tweets << tweet
-        puts t.attrs[:favorite_count]
       end
     end
-    users = User.all
     likes = Like.all
     tweets.each do |t|
       uri = URI.parse("https://api.twitter.com/2/tweets/#{t.tweet_id}/liking_users")
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = uri.scheme === "https"
-
       headers = { "Authorization" => "Bearer #{Rails.application.credentials.twitter[:bearer_token]}" }
       req = Net::HTTP::Get.new(uri.path)
       req.initialize_http_header(headers)
-
       response = http.request(req)
       json_data =  JSON.parse response.body
+
       liked_users = json_data["data"]
       liked_users.each do |u|
-        user = users.find_by(user_id:u["id"])
+        user = users.detect{|t_a| t_a.twitter_user_id == u["id"]}
         unless user.present?
-          user = User.create(user_id:u["id"], username:u["username"], name:u["name"])
+          user = TwitterAccount.create(twitter_user_id:u["id"], twitter_username:u["username"], twitter_name:u["name"])
+          users << user
         end
-        like = likes.detect{|l|l.tweet == t && l.user == user}
+        like = likes.detect{|l|l.tweet == t && l.twitter_account == user}
         unless like.present?
-          # binding.pry
-          Like.create(user:user, tweet:t)
+          Like.create(twitter_account:user, tweet:t)
         end
       end
     end

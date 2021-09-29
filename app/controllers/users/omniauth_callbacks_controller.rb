@@ -51,8 +51,8 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     else
       TwitterAccount.create!(
         twitter_user_id: user.uid,
-        twitter_username: auth.info.name,
-        twitter_name: auth.info.nickname,
+        twitter_username: auth.info.nickname,
+        twitter_name: auth.info.name,
         user: user,
       )
     end

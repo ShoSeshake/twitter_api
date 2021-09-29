@@ -5,6 +5,7 @@ import RootPage from "./components/views/tops/RootPage";
 import TweetsIndexPage from "./components/views/tweets/TweetsIndexPage";
 import LoginPage from "./components/views/auths/LoginPage";
 import OauthPage from "./components/views/auths/OauthPage";
+import LikePage from "./components/views/likes/LikePage";
 
 Vue.use(Router);
 
@@ -23,12 +24,16 @@ export default new Router({
       path: "/login",
       component: LoginPage,
       beforeEnter(to, from, next) {
-        if (store.getters.idToken) {
+        if (store.getters.id) {
           next("/");
         } else {
           next();
         }
       },
+    },
+    {
+      path: "/likes",
+      component: LikePage,
     },
     {
       path: "/oauth",

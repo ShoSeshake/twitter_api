@@ -1,5 +1,6 @@
 <template>
   <v-app id="app">
+    <v-col class="ma-0 pa-0">
     <GeneralHeader></GeneralHeader>
     <transition name="fade" mode="out-in">
       <router-view></router-view>
@@ -9,6 +10,7 @@
         <img src="~ajax-loader.gif" />
       </div>
     </transition>
+    </v-col>
   </v-app>
 </template>
 

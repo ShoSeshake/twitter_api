@@ -4,7 +4,8 @@ Rails.application.routes.draw do
   get  '/tweets', to: 'tops#index',defalt: {format: 'json'}
   get  '/login', to: 'tops#index',defalt: {format: 'json'}
   get  '/oauth', to: 'tops#index',defalt: {format: 'json'}
-  
+  get  '/likes', to: 'tops#index',defalt: {format: 'json'}
+
   devise_for :users, :controllers => {
     omniauth_callbacks: 'users/omniauth_callbacks',
     sessions: 'users/sessions',
@@ -21,6 +22,7 @@ Rails.application.routes.draw do
         get :set_id, on: :collection
       end
       resources :tweets, only: :index
+      resources :likes, only: :create
     end
   end
 end
