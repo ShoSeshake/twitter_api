@@ -39,7 +39,8 @@ class Api::V1::LikesController < ApiController
         tweet = Tweet.create(tweet_id:t[:id], tweet_text:t[:text], tweet_created_at: create_at, twitter_account:user) unless tweet.present?
         all_tweets << tweet
         tweets << tweet
-        break if tweets.length == max_results
+        break if tweets.length == 20
+        # break if tweets.length == max_results
       end
     end
     tweets
@@ -59,30 +60,33 @@ class Api::V1::LikesController < ApiController
       create_at = Time.new(c[5], c[1], c[2], c[3].split(':')[0], c[3].split(':')[1], c[3].split(':')[2])
       tweet = Tweet.create(tweet_id:tweet_data[:id], tweet_text:tweet_data[:text], tweet_created_at: create_at, twitter_account:user) unless tweet.present?
       tweets << tweet
-      break if tweets.length > 20
+      break if tweets.length > 1
     end
     tweets
   end
 
   def like_tweets(tweets, client)
+    twitter_account = TwitterAccount.find_by(twitter_username:"littlecheetah5")
     count = 0
     likes = Like.includes(:tweet, :twitter_account).all.to_a
     tweets.each do |tweet|
-      existing_like = likes.detect{|l|l.tweet == tweet && l.twitter_account == current_user.twitter_account}
+      existing_like = likes.detect{|l|l.tweet == tweet && l.twitter_account == twitter_account}
       next if existing_like.present?
       client.favorite(tweet.tweet_id)
-      like = Like.create(twitter_account:current_user.twitter_account, tweet:tweet)
+      like = Like.create(twitter_account:twitter_account, tweet:tweet)
       count += 1
+      sleep(rand(1..5))
     end
     return "#{count}件のツイートをいいねしました。"
   end
 
   def set_client
+    user = User.all.first
     client = Twitter::REST::Client.new do |config|
       config.consumer_key        = Rails.application.credentials.twitter[:api_key]
       config.consumer_secret     = Rails.application.credentials.twitter[:secret_key]
-      config.access_token        = current_user.access_token
-      config.access_token_secret = current_user.secret_token
+      config.access_token        = user.access_token
+      config.access_token_secret = user.secret_token
     end
     client
   end

@@ -5,7 +5,7 @@
     <transition name="fade" mode="out-in">
       <router-view></router-view>
     </transition>
-    <transition name="fade"  v-if="this.$store.getters.loading">
+    <transition name="fade" mode="out-in" v-if="this.$store.getters.loading">
       <div class="loading-wrapper">
         <img src="~ajax-loader.gif" />
       </div>

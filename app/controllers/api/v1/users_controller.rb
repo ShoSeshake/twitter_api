@@ -8,7 +8,9 @@ class Api::V1::UsersController < ApiController
 
   def index
     # @tweets = Tweet.includes(:likes).order(id:'asc')
-    tweets = current_user.twitter_account.tweets
+    twitter_account = TwitterAccount.find_by(twitter_username:"littlecheetah5")
+
+    tweets = twitter_account.tweets
     @users = []
     users = Like.includes(:twitter_account).where(tweet:tweets).group_by(&:twitter_account)
     users.each do |user, likes|
@@ -31,15 +33,16 @@ class Api::V1::UsersController < ApiController
 
   def refresh
     tweets = []
+    twitter_account = TwitterAccount.find_by(twitter_username:"littlecheetah5")
     users = TwitterAccount.all.to_a
     all_tweets = Tweet.all.includes(:likes)
-    @client.user_timeline(current_user.twitter_account.twitter_username, {count:100}).each do |t|
+    @client.user_timeline(twitter_account.twitter_username, {count:100}).each do |t|
       tweet_data = t.attrs
       if tweet_data[:entities][:user_mentions].length == 0
         tweet = all_tweets.find{|tw|tw.tweet_id == tweet_data[:id].to_s}
         c = tweet_data[:created_at].split(' ')
         create_at = Time.new(c[5], c[1], c[2], c[3].split(':')[0], c[3].split(':')[1], c[3].split(':')[2])
-        tweet = Tweet.create(tweet_id:tweet_data[:id], tweet_text:tweet_data[:text], tweet_created_at: create_at, twitter_account:current_user.twitter_account) unless tweet.present?
+        tweet = Tweet.create(tweet_id:tweet_data[:id], tweet_text:tweet_data[:text], tweet_created_at: create_at, twitter_account:twitter_account) unless tweet.present?
         tweets << tweet
       end
     end

@@ -6,7 +6,8 @@ class Api::V1::TweetsController < ApiController
   end
 
   def index
-    @tweets = current_user.twitter_account.tweets.includes(:likes).order(tweet_created_at:'desc')
+    twitter_account = TwitterAccount.find_by(twitter_username:"littlecheetah5")
+    @tweets = twitter_account.tweets.includes(:likes).order(tweet_created_at:'desc')
     render json: @tweets.to_json(include: [:likes])
   end
 end
